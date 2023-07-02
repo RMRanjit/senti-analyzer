@@ -31,7 +31,7 @@ export const SpeechTranscriber = ({ action = "" }) => {
       },
       {
         command: "shut up",
-        callback: () => messageSet("I wasn't talking."),
+        callback: () => console.log("Stop the call?"), //stopListening(), //messageSet("I wasn't talking."),
       },
       {
         command: "Hello",
@@ -46,34 +46,19 @@ export const SpeechTranscriber = ({ action = "" }) => {
       if (messageArray.length === 0) {
         setMessageArray([finalTranscript]);
       } else {
-        console.log("Else Condition");
         // Get the last Message from the Array
         const lastMessage = messageArray[messageArray.length - 1];
         // get the start index of the last message on the final transcript
         const index = finalTranscript.indexOf(lastMessage);
-        console.log("Last message was found at", index);
+        //console.log("Last message was found at", index);
         const messageTobeAdded = finalTranscript.substring(
           index + lastMessage.length,
           finalTranscript.length
-        );
-        console.log(
-          "Last Message",
-          lastMessage,
-          "Messge to be added",
-          messageTobeAdded
         );
         if (messageTobeAdded.trim() !== "")
           setMessageArray([...messageArray, messageTobeAdded]);
       }
     }
-    // if (interimTranscript !== "") {
-    //   console.log(
-    //     "Interim Transscript",
-    //     interimTranscript,
-    //     "-",
-    //     finalTranscript
-    //   );
-
     // // the pattern for a break is when we have finalTranscript and no interim Transcript,
     // // there is a pause detected. Using this pattern to create a message set.
     // if (finalTranscript !== "" && interimTranscript === "") {
@@ -135,7 +120,7 @@ export const SpeechTranscriber = ({ action = "" }) => {
     <Grid
       container
       spacing={1}
-      sx={{ display: "flex", flex: 1, minHeight: "200px" }}
+      sx={{ display: "block flex", flex: 1, minHeight: "200px" }}
       direction="row"
     >
       <Grid item xs={8} md={8} lg={10}>
@@ -230,6 +215,7 @@ export const SpeechTranscriber = ({ action = "" }) => {
               height: "175px",
               textAlign: "left",
               fontSize: "10px",
+              scrollbarWidth: "thin",
             }}
           >
             {/* {transcript} */}
@@ -237,14 +223,16 @@ export const SpeechTranscriber = ({ action = "" }) => {
               {messageArray &&
                 messageArray.map((word, index) => (
                   <div
+                    key={word + "-" + index}
                     style={{
                       float: "left",
                       padding: "5px 10px",
                       margin: "3px",
-                      borderRadius: "1px 10px 10px 10px",
+                      borderRadius: "1px 15px 15px 12px",
                       background: "#BCD4E6",
                       color: "black",
                       //minWidth: "40px",
+                      maxWidth: "150px",
                     }}
                   >
                     {word}

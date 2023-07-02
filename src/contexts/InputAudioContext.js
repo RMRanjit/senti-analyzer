@@ -22,7 +22,10 @@ export const InputAudioProvider = ({ children }) => {
   const stop = useCallback(async () => {
     try {
       if (context) {
-        await context.close();
+        // Checking for state, coz if we donot check then we were getting an error on the console that we are trying to close something that is already closed
+        if (context.state !== "closed") {
+          await context.close();
+        }
         setContext(undefined);
       }
       if (source) {

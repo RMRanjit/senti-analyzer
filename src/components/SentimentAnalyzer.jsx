@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 /*Material ui imports */
@@ -40,21 +40,37 @@ import { MediaStreamProvider } from "../contexts/MediaStreamContext";
 /* Few issues noticed are
 1. if the user presses 'reset', the call status toggles
 2. if the user continues to press reset in between calls, the reset works only the first time. that is becase the "Action" state does not change and propagate a change on the child component
-3. the transscript component keeps growing in size as we continue speaking
+3. the transscript component keeps growing in size as we continue speaking -- Solved
+4. Check the Web Audio Status to see if the call is really active.. right now checks based on the action status from teh Speech Transsciber component
 */
 
-const SentimentAnalyzer = (props) => {
+const SentimentAnalyzer = ({ incomingPhoneNumber = "(000) 000-0000" }) => {
   const [action, setAction] = useState("stop");
+  const [seconds, setSeconds] = useState(0);
   const handleCall = () => {
     // toggle the action
     setAction(action === "stop" ? "start" : "stop");
   };
 
+  useEffect(() => {
+    let interval = null;
+
+    if (action === "start") {
+      interval = setInterval(() => {
+        setSeconds((seconds) => seconds + 1);
+      }, 1000);
+    } else if (action === "start)" && seconds !== 0) {
+      clearInterval(interval);
+    } else if (action === "stop") {
+      clearInterval(interval);
+      setSeconds(0);
+    }
+    return () => clearInterval(interval);
+  }, [action, seconds]);
+
   return (
     <Card
       sx={{
-        maxWidth: "650px",
-        maxHeight: "500px",
         margin: "5px",
         boxShadow: "0 23px 33px 20px rgba(0, 0, 0, 0.08)",
       }}
@@ -106,7 +122,7 @@ const SentimentAnalyzer = (props) => {
                   textAlign: "left",
                 }}
               >
-                Active call
+                {action === "start" ? "Active call" : "Start call"}
               </Typography>
               <Typography
                 sx={{
@@ -118,7 +134,7 @@ const SentimentAnalyzer = (props) => {
                   textAlign: "left",
                 }}
               >
-                (000) 000-0000
+                {action === "start" ? incomingPhoneNumber : ""}
               </Typography>
               <Typography
                 sx={{
@@ -133,7 +149,10 @@ const SentimentAnalyzer = (props) => {
                   color: "#9a9a9a",
                 }}
               >
-                4.26
+                {/* show HH:MM */}
+                {/* {new Date(seconds * 1000).toISOString().substring(11, 16)} */}
+                {/*. Show MM;SS */}
+                {new Date(seconds * 1000).toISOString().substring(14, 19)}
               </Typography>
               <Box
                 sx={{
