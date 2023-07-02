@@ -47,11 +47,11 @@ export const SpeechTranscriber = ({ action = "" }) => {
         setMessageArray([finalTranscript]);
       } else {
         console.log("Else Condition");
-        const lastMessageIndex = messageArray.length - 1;
-        const lastMessage = messageArray[lastMessageIndex];
-
+        // Get the last Message from the Array
+        const lastMessage = messageArray[messageArray.length - 1];
         // get the start index of the last message on the final transcript
         const index = finalTranscript.indexOf(lastMessage);
+        console.log("Last message was found at", index);
         const messageTobeAdded = finalTranscript.substring(
           index + lastMessage.length,
           finalTranscript.length
@@ -62,7 +62,8 @@ export const SpeechTranscriber = ({ action = "" }) => {
           "Messge to be added",
           messageTobeAdded
         );
-        setMessageArray([...messageArray, messageTobeAdded]);
+        if (messageTobeAdded.trim() !== "")
+          setMessageArray([...messageArray, messageTobeAdded]);
       }
     }
     // if (interimTranscript !== "") {
@@ -88,6 +89,8 @@ export const SpeechTranscriber = ({ action = "" }) => {
     switch (action) {
       case "reset":
         reset();
+        // Clear the transscripts and the messages
+        setMessageArray([]);
         break;
       case "start":
         startListening();
@@ -177,11 +180,11 @@ export const SpeechTranscriber = ({ action = "" }) => {
               {sentimentScore ? sentimentScore.score : 0}
             </Typography>
           </Stack>
-          <Box style={{ flex: 1 }}>
+          <Box style={{ flex: 1, marginTop: -30 }}>
             <AudioVisualiser />
           </Box>
         </Stack>
-        <Box>
+        <Box justifyContent="flex-start">
           {sentimentScore &&
             positiveWords.map((word, index) => (
               <Chip
@@ -224,29 +227,31 @@ export const SpeechTranscriber = ({ action = "" }) => {
           <Box
             style={{
               overflow: "auto",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            Total messages : {messageArray.length}
-            {messageArray.map((message, index) => {
-              console.log(index, "-", message);
-              <chip title={message} />;
-            })}
-          </Box>
-          <Typography
-            style={{
-              // background: "black",
-              // color: "white",
+              height: "175px",
               textAlign: "left",
-              fontSize: "12px",
-              overflow: "auto",
-              display: "flex",
-              flexDirection: "column",
+              fontSize: "10px",
             }}
           >
-            {transcript} - {messageArray.length}
-          </Typography>
+            {/* {transcript} */}
+            <Stack>
+              {messageArray &&
+                messageArray.map((word, index) => (
+                  <div
+                    style={{
+                      float: "left",
+                      padding: "5px 10px",
+                      margin: "3px",
+                      borderRadius: "1px 10px 10px 10px",
+                      background: "#BCD4E6",
+                      color: "black",
+                      //minWidth: "40px",
+                    }}
+                  >
+                    {word}
+                  </div>
+                ))}
+            </Stack>
+          </Box>
         </Stack>
       </Grid>
     </Grid>

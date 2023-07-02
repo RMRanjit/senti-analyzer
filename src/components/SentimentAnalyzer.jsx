@@ -53,8 +53,8 @@ const SentimentAnalyzer = (props) => {
   return (
     <Card
       sx={{
-        minWidth: 450,
-        maxWidth: 750,
+        maxWidth: "650px",
+        maxHeight: "500px",
         margin: "5px",
         boxShadow: "0 23px 33px 20px rgba(0, 0, 0, 0.08)",
       }}
@@ -86,6 +86,7 @@ const SentimentAnalyzer = (props) => {
             <Stack
               direction="row"
               spacing={1}
+              //useFlexGap={true}
               //justifyItems="space-around"
               alignItems="center"
             >
@@ -101,6 +102,8 @@ const SentimentAnalyzer = (props) => {
                   marginLeft: "100px",
                   fontSize: "21px",
                   fontWeight: 900,
+                  minWidth: "100px",
+                  textAlign: "left",
                 }}
               >
                 Active call
@@ -111,6 +114,8 @@ const SentimentAnalyzer = (props) => {
                   fontSize: "15px",
                   fontWeight: 300,
                   letterSpacing: "0.85px",
+                  minWidth: "350px",
+                  textAlign: "left",
                 }}
               >
                 (000) 000-0000

@@ -25,9 +25,9 @@ const AudioVisualiser = ({ height = "100", width = "100" }) => {
         const sliceWidth = (width * 1) / data.length;
 
         if (context) {
-          context.lineWidth = 1;
+          context.lineWidth = 0.5;
           //context.strokeStyle = "#fff";
-          context.strokeStyle = "#03AC1D";
+          context.strokeStyle = "#004F98"; //"#03AC1D";
           context.clearRect(0, 0, width, height);
 
           context.beginPath();
@@ -49,7 +49,7 @@ const AudioVisualiser = ({ height = "100", width = "100" }) => {
     };
   }, [canvasRef, analyser]);
 
-  return analyser ? <canvas width="200" height="5" ref={canvasRef} /> : null;
+  return analyser ? <canvas width="200" height="100" ref={canvasRef} /> : null;
 };
 
 export default AudioVisualiser;
