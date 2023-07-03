@@ -7,6 +7,7 @@ import AudioVisualiser from "./AudioVisualizer";
 import { useMediaStream } from "../contexts/MediaStreamContext";
 
 import { Box, Typography, Stack, Grid, Chip } from "@mui/material";
+import { getKeyWords } from "../utils/KeyWordExtractor";
 
 export const SpeechTranscriber = ({ action = "" }) => {
   const [message, messageSet] = useState("");
@@ -65,10 +66,21 @@ export const SpeechTranscriber = ({ action = "" }) => {
     //   setMessageArray([...messageArray, finalTranscript]);
     // }
     //}
+
+    // extract the key words and phrases from the final transcript
+    const keyWords = getKeyWords(finalTranscript);
+    console.log(keyWords);
   }, [interimTranscript, finalTranscript]);
 
   let positiveWords = sentimentScore && [...new Set(sentimentScore.positive)];
   let negativeWords = sentimentScore && [...new Set(sentimentScore.negative)];
+  let wordOccurences = sentimentScore && [
+    sentimentScore.words.reduce(function (acc, curr) {
+      return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc;
+    }, {}),
+  ];
+
+  //console.log(wordOccurences);
 
   useEffect(() => {
     switch (action) {
@@ -90,6 +102,9 @@ export const SpeechTranscriber = ({ action = "" }) => {
 
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
     console.log(
+      "Your browser does not support speech recognition software! Try Chrome desktop, maybe?"
+    );
+    alert(
       "Your browser does not support speech recognition software! Try Chrome desktop, maybe?"
     );
 
@@ -120,8 +135,14 @@ export const SpeechTranscriber = ({ action = "" }) => {
     <Grid
       container
       spacing={1}
-      sx={{ display: "block flex", flex: 1, minHeight: "200px" }}
-      direction="row"
+      sx={{
+        display: "flex",
+        flex: 1,
+        direction: "row",
+        minHeight: "200px",
+        minWidth: "750px",
+      }}
+      direction="column"
     >
       <Grid item xs={8} md={8} lg={10}>
         <Stack direction="row" spacing={2} alignItems="center">
@@ -165,11 +186,11 @@ export const SpeechTranscriber = ({ action = "" }) => {
               {sentimentScore ? sentimentScore.score : 0}
             </Typography>
           </Stack>
-          <Box style={{ flex: 1, marginTop: -30 }}>
+          <Box style={{ flex: 1, marginTop: -50, minWidth: "250px" }}>
             <AudioVisualiser />
           </Box>
         </Stack>
-        <Box justifyContent="flex-start">
+        <Box justifyContent="flex-start" display="flex">
           {sentimentScore &&
             positiveWords.map((word, index) => (
               <Chip
@@ -212,7 +233,7 @@ export const SpeechTranscriber = ({ action = "" }) => {
           <Box
             style={{
               overflow: "auto",
-              height: "175px",
+              height: "250px",
               textAlign: "left",
               fontSize: "10px",
               scrollbarWidth: "thin",
