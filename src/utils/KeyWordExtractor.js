@@ -1,35 +1,32 @@
-const retext = require("retext");
-const pos = require("retext-pos");
-const keywords = require("retext-keywords");
-const toString = require("nlcst-to-string");
+import { toString } from "nlcst-to-string";
+import { retext } from "retext";
+import retextPos from "retext-pos";
+import retextKeywords from "retext-keywords";
 
 export const getKeyWords = (text) => {
-  retext
-    .retext()
-    //.use(pos) // Make sure to use `retext-pos` before `retext-keywords`.
-    .use(keywords)
-    .process(text, done);
-  function done(err, file) {
-    if (err) throw err;
+  let KeyWords = [];
+  let KeyPhrases = [];
 
-    console.log("Keywords:", file);
-    // file.data.keywords.forEach(function (keyword) {
-    //   console.log(toString(keyword.matches[0].node));
-    //   const word = toString(keyword.matches[0].node);
-    // });
+  retext()
+    .use(retextPos) // Make sure to use `retext-pos` before `retext-keywords`.
+    .use(retextKeywords)
+    .process(text)
+    .then((text) => {
+      text.data.keywords.forEach((keyword) => {
+        KeyWords.push(toString(keyword.matches[0].node));
+      });
 
-    // console.log("Key-phrases:");
+      console.log("Keywords:", KeyWords);
 
-    // file.data.keyphrases.forEach(function (phrase) {
-    //   console.log(phrase.matches[0].nodes.map(stringify).join(""));
-    //   function stringify(value) {
-    //     return toString(value);
-    //   }
+      // console.log();
+      // console.log("Key-phrases:");
+      // text.data.keyphrases.forEach((phrase) => {
+      //   console.log(phrase.matches[0].nodes.map((d) => toString(d)).join(""));
+      // });
 
-    //   const keyphrase = phrase.matches[0].nodes.map(stringify).join("");
-    // }
-    //);
-
-    return { keywords: [], keyPhrases: [] };
-  }
+      return KeyWords;
+      console.log("Called after return");
+    });
+  //return [...text.data.keyphrases];
+  //return { KeyWords: KeyWords, keyPhrases: [] };
 };

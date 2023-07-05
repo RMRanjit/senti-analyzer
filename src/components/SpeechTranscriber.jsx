@@ -6,6 +6,11 @@ import Sentiment from "sentiment";
 import AudioVisualiser from "./AudioVisualizer";
 import { useMediaStream } from "../contexts/MediaStreamContext";
 
+import { toString } from "nlcst-to-string";
+import { retext } from "retext";
+import retextPos from "retext-pos";
+import retextKeywords from "retext-keywords";
+
 import { Box, Typography, Stack, Grid, Chip } from "@mui/material";
 import { getKeyWords } from "../utils/KeyWordExtractor";
 
@@ -15,6 +20,8 @@ export const SpeechTranscriber = ({ action = "" }) => {
   const [sentimentScore, setSentimentScore] = useState(null);
   const sentiment = new Sentiment();
   const [messageArray, setMessageArray] = useState([]);
+  const [keywords, setKeywords] = useState([]);
+  const [keyPhrases, setKeyPhrases] = useState([]);
 
   const {
     transcript,
@@ -67,9 +74,36 @@ export const SpeechTranscriber = ({ action = "" }) => {
     // }
     //}
 
-    // extract the key words and phrases from the final transcript
-    const keyWords = getKeyWords(finalTranscript);
-    console.log(keyWords);
+    // // extract the key words and phrases from the final transcript
+    // let keywords = getKeyWords(finalTranscript);
+
+    // console.log("from speechtranscriber", keywords);
+    // // // getKeyWords(finalTranscript).then((obj) =>
+    // // //   console.log("from Speech transcriber", obj)
+    // // // );
+
+    let KeyWords = [];
+    let KeyPhrases = [];
+
+    const text = finalTranscript;
+    retext()
+      .use(retextPos) // Make sure to use `retext-pos` before `retext-keywords`.
+      .use(retextKeywords)
+      .process(text)
+      .then((text) => {
+        text.data.keywords.forEach((keyword) => {
+          KeyWords.push(toString(keyword.matches[0].node));
+        });
+
+        text.data.keyphrases.forEach((phrase) => {
+          KeyPhrases.push(
+            phrase.matches[0].nodes.map((d) => toString(d)).join("")
+          );
+        });
+      });
+
+    setKeywords(KeyWords);
+    setKeyPhrases(KeyPhrases);
   }, [interimTranscript, finalTranscript]);
 
   let positiveWords = sentimentScore && [...new Set(sentimentScore.positive)];
@@ -190,7 +224,7 @@ export const SpeechTranscriber = ({ action = "" }) => {
             <AudioVisualiser />
           </Box>
         </Stack>
-        <Box justifyContent="flex-start" display="flex">
+        <Box justifyContent="flex-start" display="flex" maxWidth="100px">
           {sentimentScore &&
             positiveWords.map((word, index) => (
               <Chip
@@ -209,6 +243,35 @@ export const SpeechTranscriber = ({ action = "" }) => {
                 label={word.toUpperCase()}
                 color="error"
                 variant="outlined"
+                size="small"
+                sx={{ marginRight: "2px", fontSize: "10px" }}
+              />
+            ))}
+        </Box>
+        <Box
+          justifyContent="flex-wrap"
+          display="flex"
+          maxWidth="100px"
+          wrap
+          flexWrap
+        >
+          {keywords &&
+            keywords.map((word, index) => (
+              <Chip
+                key={word + "-" + index}
+                label={word.toUpperCase()}
+                color="primary"
+                size="small"
+                sx={{ marginRight: "2px", fontSize: "10px" }}
+              />
+            ))}
+          <br></br>
+          {keyPhrases &&
+            keyPhrases.map((word, index) => (
+              <Chip
+                key={word + "-" + index}
+                label={word.toUpperCase()}
+                color="secondary"
                 size="small"
                 sx={{ marginRight: "2px", fontSize: "10px" }}
               />
