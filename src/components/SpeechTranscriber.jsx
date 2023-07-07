@@ -249,11 +249,11 @@ export const SpeechTranscriber = ({ action = "" }) => {
             ))}
         </Box>
         <Box
-          justifyContent="flex-wrap"
+          justifyContent="flex-start"
           display="flex"
-          maxWidth="100px"
-          wrap
-          flexWrap
+          maxWidth="500px"
+          flexWrap="wrap"
+          sx={{ marginTop: "10px" }}
         >
           {keywords &&
             keywords.map((word, index) => (
@@ -262,7 +262,7 @@ export const SpeechTranscriber = ({ action = "" }) => {
                 label={word.toUpperCase()}
                 color="primary"
                 size="small"
-                sx={{ marginRight: "2px", fontSize: "10px" }}
+                sx={{ marginRight: "2px", marginTop: "2px", fontSize: "10px" }}
               />
             ))}
           <br></br>
@@ -273,7 +273,7 @@ export const SpeechTranscriber = ({ action = "" }) => {
                 label={word.toUpperCase()}
                 color="secondary"
                 size="small"
-                sx={{ marginRight: "2px", fontSize: "10px" }}
+                sx={{ marginRight: "2px", marginTop: "2px", fontSize: "10px" }}
               />
             ))}
         </Box>
